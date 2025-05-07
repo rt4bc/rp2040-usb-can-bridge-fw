@@ -7,20 +7,11 @@
 #include <tusb.h>
 #include <bsp/board_api.h>
 
-// set some example Vendor and Product ID
-// the board will use to identify at the host
-#define _PID_MAP(itf, n) ((CFG_TUD_##itf) << (n))
-#define CDC_EXAMPLE_VID 0xCafe
-// use _PID_MAP to generate unique PID for each interface
-#define CDC_EXAMPLE_PID (0x4000 | _PID_MAP(CDC, 0))
-// set USB 2.0
-#define CDC_EXAMPLE_BCD 0x0200
-
 // defines a descriptor that will be communicated to the host
 tusb_desc_device_t const desc_device = {
     .bLength = sizeof(tusb_desc_device_t),
     .bDescriptorType = TUSB_DESC_DEVICE,
-    .bcdUSB = CDC_EXAMPLE_BCD,
+    .bcdUSB = 0x0200, // set USB 2.0, support USB High speed(480Mbps), if 0x0210, then need to support USB Battery Charging 1.1
 
     .bDeviceClass = TUSB_CLASS_MISC,         // CDC is a subclass of misc
     .bDeviceSubClass = MISC_SUBCLASS_COMMON, // CDC uses common subclass
@@ -28,8 +19,12 @@ tusb_desc_device_t const desc_device = {
 
     .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE, // 64 bytes
 
-    .idVendor = CDC_EXAMPLE_VID,
-    .idProduct = CDC_EXAMPLE_PID,
+    // https://github.com/normaldotcom/cangaroo/blob/master/src/driver/SLCANDriver/SLCANDriver.cpp
+    // if(info.vendorIdentifier() == 0x16D0 && info.productIdentifier() == 0x117E)
+    // then cangaroo can detect this CDC device
+    .idVendor = 0x16D0,
+    .idProduct = 0x117E,
+
     .bcdDevice = 0x0100, // Device release number
 
     .iManufacturer = 0x01, // Index of manufacturer string
@@ -75,7 +70,7 @@ uint8_t const *tud_descriptor_configuration_cb(uint8_t index);
 tusb_desc_device_qualifier_t const desc_device_qualifier = {
     .bLength = sizeof(tusb_desc_device_t),
     .bDescriptorType = TUSB_DESC_DEVICE,
-    .bcdUSB = CDC_EXAMPLE_BCD,
+    .bcdUSB = 0x0200,
 
     .bDeviceClass = TUSB_CLASS_CDC,
     .bDeviceSubClass = MISC_SUBCLASS_COMMON,
@@ -103,10 +98,10 @@ enum
 char const *string_desc_arr[] = {
     // switched because board is little endian
     (const char[]){0x09, 0x04}, // 0: supported language is English (0x0409)
-    "Raspberry Pi",             // 1: Manufacturer
-    "Pico RP2040",              // 2: Product
+    "GrayTech Labs",            // 1: Manufacturer
+    "CANable by RP2040",        // 2: Product
     NULL,                       // 3: Serials (null so it uses unique ID if available)
-    "Pico SDK stdio"            // 4: CDC Interface 0
+    "CDC Interface"             // 4: CDC Interface 0
 };
 
 // buffer to hold the string descriptor during the request | plus 1 for the null terminator
