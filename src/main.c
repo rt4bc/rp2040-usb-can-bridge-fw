@@ -15,22 +15,46 @@
 
 #include <tusb_config.h>
 #include <pico/bootrom.h>
+#include <pico/stdlib.h>
+#include <pico/multicore.h>
+#include <pico/binary_info.h>
+#include <pico/mutex.h>
 #include <hardware/watchdog.h>
+#include <hardware/clocks.h>
+
+#include "main.h"
+#include "led.h"
 
 int main(void)
 {
-    // Initialize TinyUSB stack
-    board_init();
-    tusb_init();
 
-    // TinyUSB board init callback after init
-    if (board_init_after_tusb)
-    {
-        board_init_after_tusb();
-    }
-
-    // let pico sdk use the first cdc interface for std io
+    // Initialize Board
+    led_init();
+#ifdef DEBUG_PRINT
     stdio_init_all();
+    DEBUG_LOG("********************************\r\n");
+    DEBUG_LOG("******RP2040 USB CAN BRIDGE*****\r\n");
+    DEBUG_LOG("********************************\r\n");
+
+    uint f_pll_sys = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
+    uint f_pll_usb = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_USB_CLKSRC_PRIMARY);
+    uint f_rosc = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC);
+    uint f_clk_sys = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS);
+    uint f_clk_peri = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI);
+    uint f_clk_usb = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB);
+    uint f_clk_adc = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC);
+
+    DEBUG_LOG("pll_sys  = %dkHz\n", f_pll_sys);
+    DEBUG_LOG("pll_usb  = %dkHz\n", f_pll_usb);
+    DEBUG_LOG("rosc     = %dkHz\n", f_rosc);
+    DEBUG_LOG("clk_sys  = %dkHz\n", f_clk_sys);
+    DEBUG_LOG("clk_peri = %dkHz\n", f_clk_peri);
+    DEBUG_LOG("clk_usb  = %dkHz\n", f_clk_usb);
+    DEBUG_LOG("clk_adc  = %dkHz\n", f_clk_adc);
+#endif
+
+    // Initialize TinyUSB stack
+    tusb_init();
     while (true)
     {
         tud_task(); // 处理TinyUSB事件
