@@ -4,23 +4,21 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <stdlib.h>
 #include <pico/bootrom.h>
 #include <pico/stdio.h>
 #include <pico/binary_info.h>
-#include <hardware/gpio.h>
-#include <hardware/spi.h>
-#include <bsp/board_api.h>
-#include <tusb.h>
-
-#include <tusb_config.h>
-#include <pico/bootrom.h>
-#include <pico/stdlib.h>
 #include <pico/multicore.h>
-#include <pico/binary_info.h>
 #include <pico/mutex.h>
+
 #include <hardware/watchdog.h>
 #include <hardware/clocks.h>
+#include <hardware/spi.h>
+#include <hardware/gpio.h>
+
+#include <bsp/board_api.h>
+
+#include <tusb.h>
+#include <tusb_config.h>
 
 #include "main.h"
 #include "led.h"
@@ -57,7 +55,7 @@ int main(void)
     tusb_init();
     while (true)
     {
-        tud_task(); // 处理TinyUSB事件
+          tud_task(); // 处理TinyUSB事件
     }
 
     return 0;
@@ -85,6 +83,6 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
     }
     else
     {
-        tud_cdc_write_clear();
+      tud_cdc_write_clear();
     }
 }

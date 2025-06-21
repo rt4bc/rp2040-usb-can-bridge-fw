@@ -18,7 +18,6 @@ add_executable(rp2040_usb_can_bridge
     src/slcan.c
     src/error.c
     src/led.c
-    driver/drv_canfdspi_api.c
 )
 option(DEBUG_PRINT "Enable debug output in C code" OFF)
 if(DEBUG_PRINT)
