@@ -15,27 +15,30 @@
     This file is used by the API.
  *******************************************************************************/
 
-//DOM-IGNORE-BEGIN
+// DOM-IGNORE-BEGIN
 /*******************************************************************************
-Copyright (c) 2016 Microchip Technology Inc. and its subsidiaries.  
-You may use this software and any derivatives exclusively with Microchip products. 
-  
-THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  
-NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, 
-INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, 
-AND FITNESS FOR A PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, 
-COMBINATION WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
-
-IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, 
-INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER 
-RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED 
-OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT ALLOWED BY LAW, 
-MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY RELATED TO THIS SOFTWARE 
-WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-
-MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE TERMS.
+* Copyright (C) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+*
+* Subject to your compliance with these terms, you may use Microchip software
+* and any derivatives exclusively with Microchip products. It is your
+* responsibility to comply with third party license terms applicable to your
+* use of third party software (including open source software) that may
+* accompany Microchip software.
+*
+* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
+* EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
+* WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
+* PARTICULAR PURPOSE.
+*
+* IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
+* INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
+* WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
+* BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
+* FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
+* ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
  *******************************************************************************/
-//DOM-IGNORE-END
+// DOM-IGNORE-END
 
 #ifndef _DRV_CANFDSPI_REGISTER_H
 #define _DRV_CANFDSPI_REGISTER_H
@@ -50,7 +53,7 @@ MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE TER
 #ifdef __cplusplus  // Provide C++ Compatibility
 extern "C" {
 #endif
-// DOM-IGNORE-END  
+// DOM-IGNORE-END
 
 
 // *****************************************************************************
@@ -68,7 +71,7 @@ extern "C" {
 // *****************************************************************************
 /* Register Addresses */
 
-/* can_fd_ubp */
+/* CAN FD Controller */
 #define cREGADDR_CiCON  	0x000
 #define cREGADDR_CiNBTCFG	0x004
 #define cREGADDR_CiDBTCFG	0x008
@@ -101,35 +104,32 @@ extern "C" {
 #define cREGADDR_CiFIFOUA   0x058
 #define CiFIFO_OFFSET       (3*4)
 
-#ifdef CAN_TXQUEUE_IMPLEMENTED
 #define cREGADDR_CiTXQCON  0x050
 #define cREGADDR_CiTXQSTA  0x054
 #define cREGADDR_CiTXQUA   0x058
-#endif
 
-#ifdef FIXED_FILTER_ADDRESS
-// Up to A1, the filter start address was fixed
-#define cREGADDR_CiFLTCON   0x1D0
-#define cREGADDR_CiFLTOBJ   0x1F0
-#define cREGADDR_CiMASK     0x1F4
-#else
-// Starting with B0, the filters start right after the FIFO control/status registers
+// The filters start right after the FIFO control/status registers
 #define cREGADDR_CiFLTCON   (cREGADDR_CiFIFOCON+(CiFIFO_OFFSET*CAN_FIFO_TOTAL_CHANNELS))
 #define cREGADDR_CiFLTOBJ   (cREGADDR_CiFLTCON+CAN_FIFO_TOTAL_CHANNELS)
 #define cREGADDR_CiMASK     (cREGADDR_CiFLTOBJ+4)
-#endif
 
 #define CiFILTER_OFFSET     (2*4)
 
-/* MCP2517 Specific */
+/* MCP25xxFD Specific */
 #define cREGADDR_OSC        0xE00
 #define cREGADDR_IOCON      0xE04
 #define cREGADDR_CRC    	0xE08
 #define cREGADDR_ECCCON  	0xE0C
 #define cREGADDR_ECCSTA  	0xE10
+#ifndef MCP2517FD
+#define cREGADDR_DEVID  	0xE14
+#endif
 
 /* RAM addresses */
+#if defined(MCP2517FD) || defined(MCP2518FD)
 #define cRAM_SIZE       2048
+#endif
+
 #define cRAMADDR_START  0x400
 #define cRAMADDR_END    (cRAMADDR_START+cRAM_SIZE)
 
@@ -148,7 +148,7 @@ typedef union _REG_t {
 
 // *****************************************************************************
 // *****************************************************************************
-/* can_fd_ubp */
+/* CAN FD Controller */
 
 // *****************************************************************************
 //! CAN Control Register
@@ -623,7 +623,7 @@ typedef union _REG_CiMASK {
 
 // *****************************************************************************
 // *****************************************************************************
-/* MCP2517 Specific */
+/* MCP25xxFD Specific */
 
 // *****************************************************************************
 //! Oscillator Control Register
@@ -634,7 +634,11 @@ typedef union _REG_OSC {
         uint32_t PllEnable : 1;
         uint32_t unimplemented1 : 1;
         uint32_t OscDisable : 1;
+#ifdef MCP2517FD
         uint32_t unimplemented2 : 1;
+#else
+        uint32_t LowPowerModeEnable : 1;
+#endif
         uint32_t SCLKDIV : 1;
         uint32_t CLKODIV : 2;
         uint32_t unimplemented3 : 1;
@@ -733,23 +737,34 @@ typedef union _REG_ECCSTA {
     uint8_t byte[4];
 } REG_ECCSTA;
 
+// *****************************************************************************
+//! DEVID Register
+
+#ifndef MCP2517FD
+typedef union _REG_DEVID {
+
+    struct {
+        uint32_t REV : 4;
+        uint32_t DEV : 4;
+        uint32_t unimplemented : 24;
+    } bF;
+    uint32_t word;
+    uint8_t byte[4];
+} REG_DEVID;
+#endif
+
 
 // *****************************************************************************
 // *****************************************************************************
 /* Register Reset Values */
 
 // *****************************************************************************
-/* can_fd_ubp */
+/* CAN FD Controller */
 
 // Control Register Reset Values up to FIFOs
-#define N_CAN_CTRL_REGS  20
-static uint32_t canControlResetValues[] = {
+const static uint32_t canControlResetValues[] = {
     /* Address 0x000 to 0x00C */
-#ifdef CAN_TXQUEUE_IMPLEMENTED
     0x04980760, 0x003E0F0F, 0x000E0303, 0x00021000,
-#else
-    0x04880760, 0x003E0F0F, 0x000E0303, 0x00021000,
-#endif
     /* Address 0x010 to 0x01C */
     0x00000000, 0x00000000, 0x40400040, 0x00000000,
     /* Address 0x020 to 0x02C */
@@ -761,33 +776,26 @@ static uint32_t canControlResetValues[] = {
 };
 
 // FIFO Register Reset Values
-#define N_CAN_FIFO_REGS (CAN_FIFO_TOTAL_CHANNELS*CiFIFO_OFFSET)
-static uint32_t canFifoResetValues[] = {
+const static uint32_t canFifoResetValues[] = {
     0x00600400, 0x00000000, 0x00000000
 };
 
 // Filter Control Register Reset Values
-#define N_CAN_FILTER_CTRL_REGS (CAN_FILTER_TOTAL/4)
-static uint32_t canFilterControlResetValue = 0x00000000;
+const static uint32_t canFilterControlResetValue = 0x00000000;
 
 // Filter and Mask Object Reset Values
-#define N_CAN_FILTER_OBJ_REGS (CAN_FILTER_TOTAL*CiFILTER_OFFSET)
-static uint32_t canFilterObjectResetValues[] = {
+const static uint32_t canFilterObjectResetValues[] = {
     0x00000000, 0x00000000
 };
 
 // *****************************************************************************
-/* MCP2517 */
+/* MCP25xxFD */
 
-#ifdef MCP2517FD
-#define N_MCP2517_CTRL_REGS 5
-static uint32_t mcp2517ControlResetValues[] = {
+#if defined(MCP2517FD) || defined(MCP2518FD)
+const static uint32_t mcp25xxfdControlResetValues[] = {
     0x00000460, 0x00000003, 0x00000000, 0x00000000, 0x00000000
 };
 #endif
 
-#ifdef  __cplusplus
-}
-#endif
 
 #endif // _DRV_CANFDSPI_REGISTER_H

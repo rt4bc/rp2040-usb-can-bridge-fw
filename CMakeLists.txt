@@ -18,6 +18,8 @@ add_executable(rp2040_usb_can_bridge
     src/slcan.c
     src/error.c
     src/led.c
+    driver/mcp25xxfd_driver/spi/drv_spi.c
+    
 )
 option(DEBUG_PRINT "Enable debug output in C code" OFF)
 if(DEBUG_PRINT)
@@ -28,7 +30,7 @@ endif()
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(rp2040_usb_can_bridge pico_stdlib hardware_spi pico_unique_id tinyusb_device tinyusb_board )
 
-target_include_directories(rp2040_usb_can_bridge PUBLIC inc driver)
+target_include_directories(rp2040_usb_can_bridge PUBLIC inc driver/mcp25xxfd_driver/spi )
 
 # create map/bin/hex/uf2 file in addition to ELF.
 pico_add_extra_outputs(rp2040_usb_can_bridge)

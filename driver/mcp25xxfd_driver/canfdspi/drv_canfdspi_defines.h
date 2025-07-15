@@ -15,27 +15,30 @@
     None.
  *******************************************************************************/
 
-//DOM-IGNORE-BEGIN
+// DOM-IGNORE-BEGIN
 /*******************************************************************************
-Copyright (c) 2016 Microchip Technology Inc. and its subsidiaries.  
-You may use this software and any derivatives exclusively with Microchip products. 
-  
-THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  
-NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, 
-INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, 
-AND FITNESS FOR A PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, 
-COMBINATION WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
-
-IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, 
-INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER 
-RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED 
-OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT ALLOWED BY LAW, 
-MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY RELATED TO THIS SOFTWARE 
-WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-
-MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE TERMS.
+* Copyright (C) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+*
+* Subject to your compliance with these terms, you may use Microchip software
+* and any derivatives exclusively with Microchip products. It is your
+* responsibility to comply with third party license terms applicable to your
+* use of third party software (including open source software) that may
+* accompany Microchip software.
+*
+* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
+* EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
+* WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
+* PARTICULAR PURPOSE.
+*
+* IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
+* INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
+* WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
+* BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
+* FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
+* ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
  *******************************************************************************/
-//DOM-IGNORE-END
+// DOM-IGNORE-END
 
 #ifndef _DRV_CANFDSPI_DEFINES_H
 #define _DRV_CANFDSPI_DEFINES_H
@@ -54,7 +57,7 @@ MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE TER
 #ifdef __cplusplus  // Provide C++ Compatibility
 extern "C" {
 #endif
-// DOM-IGNORE-END  
+// DOM-IGNORE-END
 
 
 // *****************************************************************************
@@ -62,51 +65,8 @@ extern "C" {
 // Section: Implementation
 
 // Device selection
-#define MCP2517FD
-
-// Revision
-//#define REV_A
-#define REV_B
-
-// Select ISO/non-ISO CRC
-#define ISO_CRC 1
-
-// Before B0 address of filter registers was fixed
-#ifdef REV_A
-#define FIXED_FILTER_ADDRESS
-#endif
-
-// Number of implemented FIFOs
-#ifndef FPGA
-#define CAN_FIFO_08TO15_IMPLEMENTED
-#define CAN_FIFO_16TO31_IMPLEMENTED
-#endif
-
-// Number of implemented Filters
-#ifndef FPGA
-#define CAN_FILTER_08TO15_IMPLEMENTED
-#define CAN_FILTER_16TO31_IMPLEMENTED
-#endif
-
-// Internal oscillator implemented
-#ifdef MCP2520FD
-#define CAN_INTERNAL_OSC_PRESENT
-#endif
-
-// Restricted Operation Mode implemented
-#ifdef REV_B
-#define CAN_RESTRICTED_MODE_PRESENT
-#endif
-
-// Transmit Queue
-#ifdef REV_B
-#define CAN_TXQUEUE_IMPLEMENTED
-#endif
-
-// Up to A1 silicon we had to multiply user address by 4.
-#ifdef REV_A
-#define USERADDRESS_TIMES_FOUR
-#endif
+//#define MCP2517FD
+#define MCP2518FD
 
 // Maximum Size of TX/RX Object
 #define MAX_MSG_SIZE 76
@@ -121,7 +81,7 @@ extern "C" {
 //! CAN FIFO Channels
 
 typedef enum {
-    CAN_FIFO_CH0,
+    CAN_FIFO_CH0,   // CAN_TXQUEUE_CH0
     CAN_FIFO_CH1,
     CAN_FIFO_CH2,
     CAN_FIFO_CH3,
@@ -129,7 +89,6 @@ typedef enum {
     CAN_FIFO_CH5,
     CAN_FIFO_CH6,
     CAN_FIFO_CH7,
-#ifdef CAN_FIFO_08TO15_IMPLEMENTED
     CAN_FIFO_CH8,
     CAN_FIFO_CH9,
     CAN_FIFO_CH10,
@@ -138,8 +97,6 @@ typedef enum {
     CAN_FIFO_CH13,
     CAN_FIFO_CH14,
     CAN_FIFO_CH15,
-#endif
-#ifdef CAN_FIFO_16TO31_IMPLEMENTED
     CAN_FIFO_CH16,
     CAN_FIFO_CH17,
     CAN_FIFO_CH18,
@@ -156,16 +113,11 @@ typedef enum {
     CAN_FIFO_CH29,
     CAN_FIFO_CH30,
     CAN_FIFO_CH31,
-#endif
     CAN_FIFO_TOTAL_CHANNELS
 } CAN_FIFO_CHANNEL;
 
-#ifdef CAN_TXQUEUE_IMPLEMENTED
-#define CAN_FIFO_FIRST_CHANNEL  CAN_FIFO_CH1
-#define CAN_TXQUEUE_CH0         CAN_FIFO_CH0
-#else
-#define CAN_FIFO_FIRST_CHANNEL  CAN_FIFO_CH0
-#endif
+// FIFO0 is a special FIFO, the TX Queue
+#define CAN_TXQUEUE_CH0 CAN_FIFO_CH0
 
 //! CAN Filter Channels
 
@@ -178,7 +130,6 @@ typedef enum {
     CAN_FILTER5,
     CAN_FILTER6,
     CAN_FILTER7,
-#ifdef CAN_FILTER_08TO15_IMPLEMENTED
     CAN_FILTER8,
     CAN_FILTER9,
     CAN_FILTER10,
@@ -187,8 +138,6 @@ typedef enum {
     CAN_FILTER13,
     CAN_FILTER14,
     CAN_FILTER15,
-#endif
-#ifdef CAN_FILTER_16TO31_IMPLEMENTED
     CAN_FILTER16,
     CAN_FILTER17,
     CAN_FILTER18,
@@ -205,7 +154,6 @@ typedef enum {
     CAN_FILTER29,
     CAN_FILTER30,
     CAN_FILTER31,
-#endif
     CAN_FILTER_TOTAL,
 } CAN_FILTER;
 
@@ -380,8 +328,12 @@ typedef struct _CAN_TX_MSGOBJ_CTRL {
     uint32_t BRS : 1;
     uint32_t FDF : 1;
     uint32_t ESI : 1;
+#ifdef MCP2517FD
     uint32_t SEQ : 7;
     uint32_t unimplemented1 : 16;
+#else
+    uint32_t SEQ : 23;
+#endif
 } CAN_TX_MSGOBJ_CTRL;
 
 //! CAN RX Message Object Control
@@ -552,50 +504,28 @@ typedef enum {
 } CAN_TEF_FIFO_EVENT;
 
 //! CAN Bit Time Setup: Arbitration/Data Bit Phase
+
 typedef enum {
-    CAN_500K_1M,    // 0x00
-    CAN_500K_2M,    // 0x01
+    CAN_500K_1M, // 0x00
+    CAN_500K_2M, // 0x01
     CAN_500K_3M,
     CAN_500K_4M,
-    CAN_500K_5M,    // 0x04
+    CAN_500K_5M, // 0x04
     CAN_500K_6M7,
-    CAN_500K_8M,    // 0x06
+    CAN_500K_8M, // 0x06
     CAN_500K_10M,
-    CAN_250K_500K,  // 0x08
+    CAN_250K_500K, // 0x08
     CAN_250K_833K,
     CAN_250K_1M,
     CAN_250K_1M5,
     CAN_250K_2M,
     CAN_250K_3M,
     CAN_250K_4M,
-    CAN_1000K_4M,   // 0x0f
+    CAN_1000K_4M, // 0x0f
     CAN_1000K_8M,
-    CAN_125K_500K   // 0x11
+    CAN_125K_500K // 0x11
 } CAN_BITTIME_SETUP;
 
-/*
- enum  CAN_BITTIME_SETUP{
-    CAN_500K_1M,    // 0x00
-    CAN_500K_2M,    // 0x01
-    CAN_500K_3M,
-    CAN_500K_4M,
-    CAN_500K_5M,    // 0x04
-    CAN_500K_6M7,
-    CAN_500K_8M,    // 0x06
-    CAN_500K_10M,
-    CAN_250K_500K,  // 0x08
-    CAN_250K_833K,
-    CAN_250K_1M,
-    CAN_250K_1M5,
-    CAN_250K_2M,
-    CAN_250K_3M,
-    CAN_250K_4M,
-    CAN_1000K_4M,   // 0x0f
-    CAN_1000K_8M,
-    CAN_125K_500K   // 0x11
-} ;
-
-*/
 //! CAN Nominal Bit Time Setup
 
 typedef enum {
@@ -801,6 +731,9 @@ typedef struct _CAN_OSC_CTRL {
     uint32_t OscDisable : 1;
     uint32_t SclkDivide : 1;
     uint32_t ClkOutDivide : 2;
+#ifndef MCP2517FD
+    uint32_t LowPowerModeEnable : 1;
+#endif
 } CAN_OSC_CTRL;
 
 //! Oscillator Status
@@ -822,7 +755,6 @@ typedef enum {
     CAN_ICODE_FIFO_CH5,
     CAN_ICODE_FIFO_CH6,
     CAN_ICODE_FIFO_CH7,
-#ifdef CAN_FIFO_08TO15_IMPLEMENTED
     CAN_ICODE_FIFO_CH8,
     CAN_ICODE_FIFO_CH9,
     CAN_ICODE_FIFO_CH10,
@@ -831,8 +763,6 @@ typedef enum {
     CAN_ICODE_FIFO_CH13,
     CAN_ICODE_FIFO_CH14,
     CAN_ICODE_FIFO_CH15,
-#endif
-#ifdef CAN_FIFO_16TO31_IMPLEMENTED
     CAN_ICODE_FIFO_CH16,
     CAN_ICODE_FIFO_CH17,
     CAN_ICODE_FIFO_CH18,
@@ -849,7 +779,6 @@ typedef enum {
     CAN_ICODE_FIFO_CH29,
     CAN_ICODE_FIFO_CH30,
     CAN_ICODE_FIFO_CH31,
-#endif
     CAN_ICODE_TOTAL_CHANNELS,
     CAN_ICODE_NO_INT = 0x40,
     CAN_ICODE_CERRIF,
@@ -868,15 +797,13 @@ typedef enum {
 //! RXCODE
 
 typedef enum {
-    CAN_RXCODE_FIFO_CH0,
-    CAN_RXCODE_FIFO_CH1,
+    CAN_RXCODE_FIFO_CH1=1,
     CAN_RXCODE_FIFO_CH2,
     CAN_RXCODE_FIFO_CH3,
     CAN_RXCODE_FIFO_CH4,
     CAN_RXCODE_FIFO_CH5,
     CAN_RXCODE_FIFO_CH6,
     CAN_RXCODE_FIFO_CH7,
-#ifdef CAN_FIFO_08TO15_IMPLEMENTED
     CAN_RXCODE_FIFO_CH8,
     CAN_RXCODE_FIFO_CH9,
     CAN_RXCODE_FIFO_CH10,
@@ -885,8 +812,6 @@ typedef enum {
     CAN_RXCODE_FIFO_CH13,
     CAN_RXCODE_FIFO_CH14,
     CAN_RXCODE_FIFO_CH15,
-#endif
-#ifdef CAN_FIFO_16TO31_IMPLEMENTED
     CAN_RXCODE_FIFO_CH16,
     CAN_RXCODE_FIFO_CH17,
     CAN_RXCODE_FIFO_CH18,
@@ -903,7 +828,6 @@ typedef enum {
     CAN_RXCODE_FIFO_CH29,
     CAN_RXCODE_FIFO_CH30,
     CAN_RXCODE_FIFO_CH31,
-#endif
     CAN_RXCODE_TOTAL_CHANNELS,
     CAN_RXCODE_NO_INT = 0x40,
     CAN_RXCODE_RESERVED
@@ -920,7 +844,6 @@ typedef enum {
     CAN_TXCODE_FIFO_CH5,
     CAN_TXCODE_FIFO_CH6,
     CAN_TXCODE_FIFO_CH7,
-#ifdef CAN_FIFO_08TO15_IMPLEMENTED
     CAN_TXCODE_FIFO_CH8,
     CAN_TXCODE_FIFO_CH9,
     CAN_TXCODE_FIFO_CH10,
@@ -929,8 +852,6 @@ typedef enum {
     CAN_TXCODE_FIFO_CH13,
     CAN_TXCODE_FIFO_CH14,
     CAN_TXCODE_FIFO_CH15,
-#endif
-#ifdef CAN_FIFO_16TO31_IMPLEMENTED
     CAN_TXCODE_FIFO_CH16,
     CAN_TXCODE_FIFO_CH17,
     CAN_TXCODE_FIFO_CH18,
@@ -947,28 +868,20 @@ typedef enum {
     CAN_TXCODE_FIFO_CH29,
     CAN_TXCODE_FIFO_CH30,
     CAN_TXCODE_FIFO_CH31,
-#endif
     CAN_TXCODE_TOTAL_CHANNELS,
     CAN_TXCODE_NO_INT = 0x40,
     CAN_TXCODE_RESERVED
 } CAN_TXCODE;
 
 //! System Clock Selection
-/*
- enum CAN_SYSCLK_SPEED{
-    CAN_SYSCLK_40M,
-    CAN_SYSCLK_20M,
-    CAN_SYSCLK_10M
-} ;
-*/
 
 typedef enum {
     CAN_SYSCLK_40M,
     CAN_SYSCLK_20M,
     CAN_SYSCLK_10M
 } CAN_SYSCLK_SPEED;
-//! CLKO Divide
 
+//! CLKO Divide
 
 typedef enum {
     OSC_CLKO_DIV1,
@@ -977,7 +890,4 @@ typedef enum {
     OSC_CLKO_DIV10
 } OSC_CLKO_DIVIDE;
 
-#ifdef  __cplusplus
-}
-#endif
 #endif // _DRV_CANFDSPI_DEFINES_H
