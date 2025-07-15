@@ -59,6 +59,8 @@ extern "C" {
 #define DRV_CANFDSPI_0_TX 19
 #define DRV_CANFDSPI_0_RX 16
 
+#define SPI_DEFAULT_BUFFER_LENGTH 64
+
 //! SPI Initialization
 
 void DRV_SPI_Initialize();

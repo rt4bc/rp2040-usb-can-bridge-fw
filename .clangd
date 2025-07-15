@@ -1,9 +1,0 @@
-CompileFlags:
-  Add: [
-    "--target=arm-none-eabi",
-    "-mcpu=cortex-m0plus",
-    "-mthumb",
-    "-I/C/Users/BoChao/scoop/apps/gcc-arm-none-eabi/current/arm-none-eabi/include",
-
-  ]
-

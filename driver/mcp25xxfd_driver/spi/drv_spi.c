@@ -40,8 +40,6 @@
  *******************************************************************************/
 // DOM-IGNORE-END
 
-#include <hardware/structs/io_bank0.h>
-#include <stdint.h>
 
 #include "drv_spi.h"
 
