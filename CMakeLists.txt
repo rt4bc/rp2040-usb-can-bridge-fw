@@ -14,6 +14,7 @@ pico_sdk_init()
 add_executable(rp2040_usb_can_bridge
     src/main.c
     src/system.c
+    src/core1.c
     src/usb_descriptors.c
     src/can.c
     src/slcan.c
@@ -29,7 +30,7 @@ if(DEBUG_PRINT)
 endif()
 
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(rp2040_usb_can_bridge pico_stdlib hardware_spi pico_unique_id tinyusb_device tinyusb_board )
+target_link_libraries(rp2040_usb_can_bridge pico_stdlib hardware_spi pico_unique_id tinyusb_device tinyusb_board  pico_multicore)
 
 target_include_directories(rp2040_usb_can_bridge PUBLIC inc driver/mcp25xxfd_driver/spi driver/mcp25xxfd_driver/canfdspi)
 

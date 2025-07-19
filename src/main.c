@@ -15,10 +15,15 @@
 
 #include "system.h"
 
+void core1_entry();
+
 int main(void) {
 
   // Initialize Board
   system_init();
+
+  //
+  multicore_launch_core1(core1_entry);
 
   // Initialize TinyUSB stack
   tusb_init();
