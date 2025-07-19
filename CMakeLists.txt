@@ -13,6 +13,7 @@ pico_sdk_init()
 
 add_executable(rp2040_usb_can_bridge
     src/main.c
+    src/system.c
     src/usb_descriptors.c
     src/can.c
     src/slcan.c
